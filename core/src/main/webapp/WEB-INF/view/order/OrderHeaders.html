@@ -1,0 +1,279 @@
+<#--
+ * description: OmOrderHeaders
+ * version: 1.0
+ * #copyright#
+ *
+-->
+<#include "../include/head.html">
+<body style="padding: 10px;">
+<script src="${base.contextPath}/common/code?resourceTypeData=HAP_OM_ORDER_STATUS" type="text/javascript"></script>
+<form id="orderForm"></form>
+<div id="orderGrid" style="margin: 0; padding: 0"></div>
+<script type="text/javascript">
+    $(function () {
+        window['orderForm'] = $("#orderForm").ligerForm({
+            fields : [{
+                display : "companyName",
+                name : "companyId",//最终选中的值字段名
+                type : "popup",
+                newline : false,
+                //如果不需要把lov选中的textField值放进data中那么这个属性可以不设置，如果需要放在data中就需要设置
+                textField:'companyName',
+                options:{
+                    readonly:false,//是否可编辑
+                    valueField : 'companyId',//选中的valueField
+                    textField : 'companyName',//选中的textField
+                    grid : {
+                    	 width:500,
+                        columns : [ {
+                            display : 'companyNumber',
+                            name : "companyNumber",
+                            width : 200,
+                            type : "text",
+                            align : "left"
+                        }, {
+                            display : 'companyName',
+                            name : "companyName",
+                            width :200,
+                            type : "text",
+                            align : "left"
+                        }],
+                        //数据查询的url
+                        url : '${base.contextPath}/companys/query' 
+                    },
+                    //lov上的查询条件
+                    condition : {
+                        inputWidth : 150,
+                        labelWidth : 150,
+                        fields : [ {
+                            display : 'companyNumber',
+                            name : "companyNumber",
+                            newline : false,
+                            type : "text"
+                        }, {
+                            display : 'companyName',
+                            name : "companyName",
+                            newline : false,
+                            type : "text"
+                        } ]
+                    }
+                }
+            },{
+                display : "customerName",
+                name : "customerId",//最终选中的值字段名
+                type : "popup",
+                newline : false,
+             
+                //如果不需要把lov选中的textField值放进data中那么这个属性可以不设置，如果需要放在data中就需要设置
+                textField:'customerName',
+                options:{
+                    readonly:false,//是否可编辑
+                    valueField : 'customerId',//选中的valueField
+                    textField : 'customerName',//选中的textField
+                    grid : {
+                    	width:500,
+                        columns : [ {
+                            display : 'customerNumber',
+                            name : "customerNumber",
+                            width : 200,
+                            type : "text",
+                            align : "left"
+                        }, {
+                            display : 'customerName',
+                            name : "customerName",
+                            width :200,
+                            type : "text",
+                            align : "left"
+                        }],
+                        //数据查询的url
+                        url : '${base.contextPath}/customers/query' ,
+                       
+                        onLoadData: function() {
+                            //设置参数
+                            if($.ligerui.get('companyId').getValue()!=null)
+                           {  this.setParm('companyId', $.ligerui.get('companyId').getValue());
+                            }
+                       }
+                      
+                    },
+                    //lov上的查询条件
+                    condition : {
+                        inputWidth : 150,
+                        labelWidth : 150,
+                        fields : [ {
+                            display : 'customerNumber',
+                            name : "customerNumber",
+                            newline : false,
+                            type : "text"
+                        }, {
+                            display : 'customerName',
+                            name : "customerName",
+                            newline : false,
+                            type : "text"
+                        } ]
+                    }
+                }
+            },{
+            	display : 'orderNumber',
+                name : "orderNumber",
+                newline : false,
+                type : "text",
+           
+            },{
+                display : "inventory",
+                name : 'inventoryItemId',//最终选中的值字段名
+                type : "popup",
+                newline : true,
+                //如果不需要把lov选中的textField值放进data中那么这个属性可以不设置，如果需要放在data中就需要设置
+                textField:'itemDescription',
+                options:{
+                    readonly:false,//是否可编辑
+                    valueField : 'inventoryItemId',//选中的valueField
+                    textField : 'itemDescription',//选中的textField
+                    grid : {
+                    	width:500,
+                        columns : [ {
+                            display : 'itemCode',
+                            name : "itemCode",
+                            width : 200,
+                            type : "text",
+                            align : "left"
+                        }, {
+                            display : 'itemDescription',
+                            name : "itemDescription",
+                            width :200,
+                            type : "text",
+                            align : "left"
+                        }],
+                        //数据查询的url
+                        url : '${base.contextPath}/inventoryItems/query' ,
+                    },
+                    //lov上的查询条件
+                    condition : {
+                        inputWidth : 150,
+                        labelWidth : 150,
+                        fields : [ {
+                            display : 'itemCode',
+                            name : "itemCode",
+                            newline : false,
+                            type : "text"
+                        }, {
+                            display : 'itemDescription',
+                            name : "itemDescription",
+                            newline : false,
+                            type : "text"
+                        } ]
+                    }
+                }
+            },
+            {
+	            type : 'combobox',
+	            label : '订单状态',
+	            name : 'orderStatus',
+	            options : {
+	                valueField : 'value',
+	                textField : 'meaning',
+	                data : resourceTypeData
+	            },
+	            newline : false
+	        }
+            ],
+            buttons: [{
+                text    : '<@spring.message "hap.query"/>',
+                disabled: false,
+                width   : 60,
+                click   : function () {
+                    Hap.gridQuery({
+                        form: orderForm,
+                        grid: orderGrid
+                    })
+                }
+            },{
+                text    : '<@spring.message "hap.reset"/>',
+                disabled: false,
+                width   : 60,
+                click   : function () {
+                	orderForm.reset();
+                }
+            },{
+                text    : '导出Excel',
+                disabled: false,
+                width   : 60,
+                click   : function () {
+                	//TODO
+                }
+            }
+            
+            ]
+        });
+
+        window['orderGrid'] = $("#orderGrid").ligerGrid({
+            unSetValidateAttr: false,
+            columns          : [{
+                display: '<@spring.message "hapExam.core.order.dto.ordernumber"/>',
+                name   : 'orderNumber',
+                align  : 'left',
+                width  : 120
+            },{
+                display: '<@spring.message "hapExam.core.order.dto.companyname"/>',
+                name   : 'companyName',
+                align  : 'left',
+                width  : 120,
+                editor : {
+                    type: 'text'
+                }
+	            /* validate:{
+		            required:true
+	            } */
+            },{
+                display: '<@spring.message "hapExam.core.order.dto.customername"/>',
+                name   : 'customerName',
+                align  : 'left',
+                width  : 120,
+                editor : {
+                    type: 'text'
+                }
+            },{
+                display: '<@spring.message "hapExam.core.order.dto.orderdate"/>',
+                name   : 'orderDate',
+                align  : 'left',
+                width  : 120
+	           
+            },{
+                display: '<@spring.message "hapExam.core.order.dto.orderstatus"/>',
+                name   : 'orderStatus',
+                align  : 'left',
+                width  : 120
+            },{
+                display: '<@spring.message "hapExam.core.order.dto.orderprice"/>',
+               name   : 'orderPrice',
+                align  : 'left',
+                width  : 120
+            }],
+            url              : '${base.contextPath}/orderHeaders/query',
+            toolbar          : {
+                items: [{
+                    text   : '<@spring.message "hap.new"/>',
+                    disable: false,
+                    click  : function () {
+                    	$.ligerDialog.open({
+                    		load:false,
+                    		width:1100,
+                    		height:500,
+                    		url:'OrderLines.html'
+                    		});
+                    },
+                    icon   : 'add'
+                }, {
+                    line: true
+                }]
+            },
+            enabledEdit      : false,
+            width            : '99%',
+            height           : '98%',
+            checkbox         : true
+        });
+    });
+</script>
+</body>
+</html>

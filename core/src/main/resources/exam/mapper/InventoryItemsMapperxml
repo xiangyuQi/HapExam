@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ 
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="hap.exam.mapper.OrderHeadersMapper">
+    <resultMap id="BaseResultMap" type="hap.exam.dto.OrderHeaders" extends="com.hand.hap.mapper.StdMapper.STD">
+        <id column="HEADER_ID" property="headerId" jdbcType="BIGINT" />
+    	<result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR" />
+    	<result column="COMPANY_ID" property="companyId" jdbcType="BIGINT" />
+    	<result column="ORDER_DATE" property="orderDate" jdbcType="TIMESTAMP" />
+    	<result column="ORDER_STATUS" property="orderStatus" jdbcType="VARCHAR" />
+    	<result column="CUSTOMER_ID" property="customerId" jdbcType="BIGINT" />
+    </resultMap>
+	
+	<resultMap id="OrderHeadersDisplay" type="hap.exam.dto.OrderHeadersDisplay" extends="BaseResultMap">
+		<result column="companyName" property="companyName" jdbcType="VARCHAR" />
+		<result column="customerName" property="customerName" jdbcType="VARCHAR" />
+		<result column="orderPrice" property="orderPrice" />
+	</resultMap>
+	
+	<select id="selectByHeaders" parameterType="hap.exam.dto.OrderHeadersDisplay" resultMap="OrderHeadersDisplay">
+		SELECT h.HEADER_ID,
+		       h.ORDER_NUMBER,
+		       h.COMPANY_ID,
+		       h.ORDER_DATE,
+		       h.ORDER_STATUS,
+		       h.CUSTOMER_ID,
+		       c.COMPANY_NAME as companyName ,
+		       cu.CUSTOMER_NAME as customerName,
+		       hl.UNIT_SELLING_PRICE * hl.ORDERD_QUANTITY as orderPrice
+		  FROM hap_om_order_headers h,hap_org_companys c,hap_ar_customers cu,hap_om_order_lines hl
+				
+		<where>
+        	<if test="orderNumber != null">
+                AND h.ORDER_NUMBER like #{orderNumber,jdbcType=VARCHAR}
+            </if>
+            <if test="companyId != null">
+                AND  h.COMPANY_ID = #{companyId}
+            </if>
+            <if test="customerId != null">
+                AND h.CUSTOMER_ID = #{customerId}
+            </if>
+            <if test="inventoryItemId != null">
+                AND h.HEADER_ID = (
+                	select h.HEADER_ID 
+                	from hap_om_order_lines hl,hap_om_order_headers h,hap_inv_inventory_items hii 
+                	where h.HEADER_ID = hl.HEADER_ID and hl.INVENTORY_ITEM_ID = hii.INVENTORY_ITEM_ID
+                	AND hii.INVENTORY_ITEM_ID = #{inventoryItemId}) 
+            </if>
+            <if test="orderStatus !=null"> 
+            	AND h.ORDER_STATUS  = #{orderStatus}
+            </if> 
+            AND  h.HEADER_ID = hl.HEADER_ID AND c.COMPANY_ID = h.COMPANY_ID and h.CUSTOMER_ID = cu.CUSTOMER_ID
+        </where>
+    </select>
+    
+</mapper>
