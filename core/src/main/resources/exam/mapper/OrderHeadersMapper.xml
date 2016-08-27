@@ -29,9 +29,9 @@
 		       h.CUSTOMER_ID,
 		       c.COMPANY_NAME as companyName ,
 		       cu.CUSTOMER_NAME as customerName,
-		       hl.UNIT_SELLING_PRICE * hl.ORDERD_QUANTITY as orderPrice
+         hl.UNIT_SELLING_PRICE * hl.ORDERD_QUANTITY as orderPrice
 		  FROM hap_om_order_headers h,hap_org_companys c,hap_ar_customers cu,hap_om_order_lines hl
-				
+
 		<where>
         	<if test="orderNumber != null">
                 AND h.ORDER_NUMBER like #{orderNumber,jdbcType=VARCHAR}
@@ -46,12 +46,11 @@
                 AND h.HEADER_ID = (
                 	select h.HEADER_ID 
                 	from hap_om_order_lines hl,hap_om_order_headers h,hap_inv_inventory_items hii 
-                	where h.HEADER_ID = hl.HEADER_ID and hl.INVENTORY_ITEM_ID = hii.INVENTORY_ITEM_ID
-                	AND hii.INVENTORY_ITEM_ID = #{inventoryItemId}) 
+                	where h.HEADER_ID = hl.HEADER_ID and hl.INVENTORY_ITEM_ID = hii.INVENTORY_ITEM_ID and  hii.INVENTORY_ITEM_ID = #{inventoryItemId}) 
             </if>
-            <if test="orderStatus !=null"> 
-            	AND h.ORDER_STATUS  = #{orderStatus}
-            </if> 
+            <if test="orderStatus !=null">
+            	AND h.ORDER_STATUS = #{orderStatus}
+            </if>
             AND  h.HEADER_ID = hl.HEADER_ID AND c.COMPANY_ID = h.COMPANY_ID and h.CUSTOMER_ID = cu.CUSTOMER_ID
         </where>
     </select>

@@ -13,7 +13,7 @@
         <div id="inventoryGrid" style="margin: 0; padding: 0"></div>
     </div>
     <div tabid="additionTab" title="其他" lselected="true">
-        <div id="additionGrid"></div>
+        <div id="otherGrid"></div>
     </div>
 </div>
 <script type="text/javascript">
@@ -207,17 +207,99 @@
                 	//TODO
                 }
             },{
-                text    : '返回',
+                text    : "返回",
                 disabled: false,
                 width   : 60,
                 click   : function () {
-                	//TODO
+            
                 }
             }
             
             ]
         });
-
+        window['otherGrid'] = $("#otherGrid").ligerGrid({
+            unSetValidateAttr: false,
+            columns          : [{
+        		display: "行号",
+        		width: 50,
+        		type: 'text'
+        	},{
+        	    display : '附件信息1',
+        	    name : 'accessory1',
+        	    width : 150,
+        	    editor : {
+        	        type : 'text'
+        	    }
+        	    
+        	},{
+        	    display : '附件信息2',
+        	    name : 'accessory2',
+        	    width : 150,
+        	    editor : {
+        	        type : 'text'
+        	    }
+        	    
+        	},{
+        	    display : '附件信息3',
+        	    name : 'accessory3',
+        	    width : 150,
+        	    editor : {
+        	        type : 'text'
+        	    }
+        	    
+        	},{
+        	    display : '附件信息4',
+        	    name : 'accessory4',
+        	    width : 150,
+        	    editor : {
+        	        type : 'text'
+        	    }
+        	    
+        	},{
+        	    display : '附件信息5',
+        	    name : 'accessory5',
+        	    width : 150,
+        	    editor : {
+        	        type : 'text'
+        	    }
+        	    
+        	}],
+         //   url              : '${base.contextPath}/orderHeaders/query',
+            toolbar          : {
+                items: [{
+                    text   : '<@spring.message "hap.new"/>',
+                    disable: false,
+     	                click : function() {
+     	                    mainGrid.addRow({
+     	                    });
+     	                },
+                    icon   : 'add'
+                }, {
+                    line: true
+                },{
+                    text   : '<@spring.message "hap.save"/>',
+                    disable: false,
+                    click  : function () {
+                    	
+                    },
+                    icon   : 'save'
+                }, {
+                    line: true
+                },{
+                    text   : '<@spring.message "hap.delete"/>',
+                    disable: false,
+                    click  : function () {
+                    },
+                    icon   : 'delete'
+                }]
+            },
+            enabledEdit      : true,
+            width            : '99%',
+            height           : '98%',
+            checkbox         : true
+          });
+        
+        
         window['inventoryGrid'] = $("#inventoryGrid").ligerGrid({
         	 unSetValidateAttr: false,
              columns          : [ {
